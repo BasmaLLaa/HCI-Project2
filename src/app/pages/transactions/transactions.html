@@ -1,0 +1,107 @@
+<div class="panel-grid">
+  <section class="card form-card" *ngIf="(categories$ | async) as categories; else loading">
+    <div class="section-title">Log a transaction</div>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="tx-form">
+      <label>
+        <span>Description</span>
+        <input type="text" formControlName="description" placeholder="e.g. Coffee with friends">
+        <small *ngIf="form.controls.description.touched && form.controls.description.invalid" class="error">
+          Please describe the transaction
+        </small>
+      </label>
+
+      <label>
+        <span>Amount</span>
+        <input type="number" formControlName="amount" min="1" step="1">
+        <small *ngIf="form.controls.amount.touched && form.controls.amount.invalid" class="error">
+          Amount must be at least 1
+        </small>
+      </label>
+
+      <div class="row">
+        <label>
+          <span>Date</span>
+          <input type="date" formControlName="date">
+        </label>
+        <label>
+          <span>Type</span>
+          <select formControlName="type">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        <span>Category</span>
+        <select formControlName="categoryId">
+          <option [ngValue]="null">Select category</option>
+          <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+        </select>
+        <small *ngIf="form.controls.categoryId.touched && form.controls.categoryId.invalid" class="error">
+          Choose where it belongs
+        </small>
+      </label>
+
+      <label *ngIf="budgets$ | async as budgets">
+        <span>Budget (optional)</span>
+        <select formControlName="budgetId">
+          <option [ngValue]="null">No specific budget</option>
+          <option *ngFor="let budget of budgets" [ngValue]="budget.id">{{ budget.name }}</option>
+        </select>
+      </label>
+
+      <div class="row">
+        <label>
+          <span>Payment</span>
+          <select formControlName="paymentMethod">
+            <option value="card">Card</option>
+            <option value="cash">Cash</option>
+            <option value="transfer">Bank transfer</option>
+          </select>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" formControlName="recurring">
+          <span>Recurring</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn primary" [disabled]="submitting">
+          {{ editingTransaction ? 'Update' : 'Add' }} transaction
+        </button>
+        <button type="button" class="btn ghost" (click)="resetForm()" [disabled]="submitting">Clear</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card list-card" *ngIf="(transactions$ | async) as txs">
+    <div class="section-title">Transactions</div>
+    <ng-container *ngIf="categories$ | async as categories">
+      <div class="tx-row" *ngFor="let tx of txs">
+        <div class="tx-meta">
+          <span class="pill" [ngClass]="{ positive: tx.type === 'income', negative: tx.type === 'expense' }">
+            {{ tx.type | titlecase }}
+          </span>
+          <div>
+            <p class="tx-desc">{{ tx.description }}</p>
+            <p class="muted">
+              {{ tx.date | date:'mediumDate' }} · {{ categoryName(categories, tx.categoryId) }}
+            </p>
+          </div>
+        </div>
+        <p [ngClass]="{ positive: tx.type === 'income', negative: tx.type === 'expense' }">
+          {{ tx.type === 'income' ? '+' : '-' }}{{ tx.amount | currency }}
+        </p>
+        <div class="row-actions">
+          <button class="btn ghost" type="button" (click)="edit(tx)" [disabled]="submitting">Edit</button>
+          <button class="btn danger" type="button" (click)="delete(tx)" [disabled]="submitting">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+  </section>
+</div>
+
+<ng-template #loading>
+  <p class="muted">Loading categories…</p>
+</ng-template>

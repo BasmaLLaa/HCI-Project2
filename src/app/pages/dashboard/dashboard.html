@@ -1,0 +1,91 @@
+<section class="grid kpis" *ngIf="kpis$ | async as kpis">
+  <div class="card highlight">
+    <p class="label">Net balance</p>
+    <h2>{{ kpis.balance | currency }}</h2>
+    <p class="muted">Income {{ kpis.income | currency }} · Expenses {{ kpis.expenses | currency }}</p>
+    <div class="progress">
+      <div class="progress-bar" [style.width.%]="kpis.utilization"></div>
+    </div>
+    <p class="muted">Budget use: {{ kpis.utilization | percent:'1.0-0' }}</p>
+  </div>
+
+  <div class="card">
+    <p class="label">Active budgets</p>
+    <h2>{{ kpis.activeBudgets }}</h2>
+    <p class="muted">Limit {{ kpis.budgetLimit | currency }} · Spent {{ kpis.budgetSpent | currency }}</p>
+  </div>
+
+  <div class="card">
+    <p class="label">Cashflow health</p>
+    <h2 [ngClass]="{ positive: kpis.balance >= 0, negative: kpis.balance < 0 }">
+      {{ kpis.balance >= 0 ? '+' : '-' }}{{ kpis.balance | currency }}
+    </h2>
+    <p class="muted">Track to stay above zero</p>
+  </div>
+</section>
+
+<section class="grid two">
+  <div class="card" *ngIf="topCategories$ | async as categories">
+    <div class="section-title">Top spending categories</div>
+    <div class="category-row" *ngFor="let cat of categories">
+      <div class="category-meta">
+        <span class="dot" [style.background]="cat.percent > 30 ? '#fb7185' : '#22c55e'"></span>
+        <div>
+          <p class="category-name">{{ cat.category }}</p>
+          <p class="muted">{{ cat.total | currency }}</p>
+        </div>
+      </div>
+      <div class="bar">
+        <span [style.width.%]="cat.percent"></span>
+      </div>
+      <p class="percent">{{ cat.percent }}%</p>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="monthly$ | async as months">
+    <div class="section-title">Monthly cashflow</div>
+    <div class="month-row" *ngFor="let month of months">
+      <div>
+        <p class="category-name">Period {{ month.label }}</p>
+        <p class="muted">Income {{ month.income | currency }} · Expenses {{ month.expenses | currency }}</p>
+      </div>
+      <p [ngClass]="{ positive: month.balance >= 0, negative: month.balance < 0 }">
+        {{ month.balance | currency }}
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="grid two">
+  <div class="card" *ngIf="(categories$ | async) as categories">
+    <div class="section-title">Recent transactions</div>
+    <div class="transaction-row" *ngFor="let tx of recentTransactions$ | async">
+      <div>
+        <p class="category-name">{{ tx.description }}</p>
+        <p class="muted">
+          {{ tx.date | date:'mediumDate' }} · {{ categoryName(categories, tx.categoryId) }}
+        </p>
+      </div>
+      <p [ngClass]="{ positive: tx.type === 'income', negative: tx.type === 'expense' }">
+        {{ tx.type === 'income' ? '+' : '-' }}{{ tx.amount | currency }}
+      </p>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="upcomingGoals$ | async as goals">
+    <div class="section-title">Goals in progress</div>
+    <div class="goal-row" *ngFor="let goal of goals">
+      <div class="goal-head">
+        <p class="category-name">{{ goal.title }}</p>
+        <p class="muted">
+          {{ goal.currentAmount | currency }} / {{ goal.targetAmount | currency }}
+          <ng-container *ngIf="goal.dueDate"> · Due {{ goal.dueDate | date:'mediumDate' }}</ng-container>
+        </p>
+      </div>
+      <div class="bar">
+        <span [style.width.%]="goalProgress(goal)"></span>
+      </div>
+      <p class="percent">{{ goalProgress(goal) }}%</p>
+    </div>
+  </div>
+</section>

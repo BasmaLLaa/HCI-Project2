@@ -1,0 +1,38 @@
+.auth-shell {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+}
+
+input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #e2e8f0;
+}
+
+.hint {
+  color: var(--muted);
+  margin: 0;
+}
+
+.error {
+  color: #f87171;
+  font-size: 12px;
+}

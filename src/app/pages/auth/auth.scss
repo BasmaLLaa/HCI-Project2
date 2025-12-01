@@ -1,0 +1,59 @@
+.auth-shell {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.tabs button {
+  background: transparent;
+  border: none;
+  padding: 12px 10px;
+  color: #cbd5e1;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.tabs button.active {
+  background: rgba(124, 58, 237, 0.18);
+  color: #f8fafc;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+}
+
+input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #e2e8f0;
+}
+
+.hint {
+  color: var(--muted);
+  margin: 0;
+}
+
+.error {
+  color: #f87171;
+  font-size: 12px;
+}

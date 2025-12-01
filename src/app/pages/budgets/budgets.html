@@ -1,0 +1,89 @@
+<div class="panel-grid">
+  <section class="card form-card" *ngIf="categories$ | async as categories">
+    <div class="section-title">Create or edit budget</div>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="budget-form">
+      <label>
+        <span>Name</span>
+        <input type="text" formControlName="name" placeholder="e.g. Groceries">
+        <small *ngIf="form.controls.name.touched && form.controls.name.invalid" class="error">Name is required</small>
+      </label>
+
+      <label>
+        <span>Limit</span>
+        <input type="number" formControlName="limit" min="50" step="50">
+        <small *ngIf="form.controls.limit.touched && form.controls.limit.invalid" class="error">
+          Enter at least 50
+        </small>
+      </label>
+
+      <label>
+        <span>Period</span>
+        <select formControlName="period">
+          <option>Weekly</option>
+          <option>Monthly</option>
+          <option>Quarterly</option>
+          <option>Yearly</option>
+        </select>
+      </label>
+
+      <div class="category-pills">
+        <p>Categories</p>
+        <div class="pill-row">
+          <label class="pill" *ngFor="let cat of categories">
+            <input
+              type="checkbox"
+              [value]="cat.id"
+              (change)="toggleCategory(cat.id, $event.target.checked)"
+              [checked]="form.controls.categoryIds.value?.includes(cat.id)"
+            >
+            <span class="dot" [style.background]="cat.color"></span>
+            {{ cat.name }}
+          </label>
+        </div>
+        <small *ngIf="form.controls.categoryIds.touched && form.controls.categoryIds.invalid" class="error">
+          Pick at least one category
+        </small>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn primary" [disabled]="submitting">
+          {{ editingBudget ? 'Update budget' : 'Create budget' }}
+        </button>
+        <button type="button" class="btn ghost" (click)="resetForm()" [disabled]="submitting">Reset</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card budgets-card">
+    <div class="section-title">Budgets overview</div>
+    <div class="budget-row" *ngFor="let budget of budgets$ | async">
+      <div>
+        <p class="budget-name">{{ budget.name }}</p>
+        <p class="muted">
+          {{ budget.period }} · {{ budget.categoryIds.length }} categories · Limit {{ budget.limit | currency }}
+        </p>
+        <div class="budget-tags" *ngIf="categories$ | async as cats">
+          <span class="pill" *ngFor="let id of budget.categoryIds">
+            <span class="dot" [style.background]="categoryColor(cats, id)"></span>
+            {{ labelForCategory(cats, id) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="budget-numbers">
+        <p>{{ budget.spent | currency }} / {{ budget.limit | currency }}</p>
+        <div class="progress">
+          <div
+            class="progress-bar"
+            [ngClass]="{ warn: budget.spent > budget.limit * 0.8 }"
+            [style.width.%]="(budget.spent / budget.limit) * 100"
+          ></div>
+        </div>
+        <div class="row-actions">
+          <button class="btn ghost" type="button" (click)="edit(budget)" [disabled]="submitting">Edit</button>
+          <button class="btn danger" type="button" (click)="delete(budget)" [disabled]="submitting">Delete</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

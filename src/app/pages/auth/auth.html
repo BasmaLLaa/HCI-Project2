@@ -1,0 +1,54 @@
+<section class="auth-shell card">
+  <div class="tabs">
+    <button type="button" [class.active]="mode === 'login'" (click)="switchMode('login')">Login</button>
+    <button type="button" [class.active]="mode === 'register'" (click)="switchMode('register')">Create account</button>
+  </div>
+
+  <form *ngIf="mode === 'login'" [formGroup]="loginForm" (ngSubmit)="submit()" class="auth-form">
+    <label>
+      <span>Email</span>
+      <input type="email" formControlName="email" placeholder="you@email.com">
+      <small *ngIf="loginForm.controls.email.touched && loginForm.controls.email.invalid" class="error">Valid email required</small>
+    </label>
+
+    <label>
+      <span>Password</span>
+      <input type="password" formControlName="password" placeholder="••••••••">
+      <small *ngIf="loginForm.controls.password.touched && loginForm.controls.password.invalid" class="error">
+        Min 6 characters
+      </small>
+    </label>
+
+    <p *ngIf="error" class="error">{{ error }}</p>
+
+    <button class="btn primary" type="submit" [disabled]="submitting">Sign in</button>
+    <p class="hint">No account? <a routerLink="/auth/register" (click)="switchMode('register')">Register</a></p>
+  </form>
+
+  <form *ngIf="mode === 'register'" [formGroup]="registerForm" (ngSubmit)="submit()" class="auth-form">
+    <label>
+      <span>Name</span>
+      <input type="text" formControlName="name" placeholder="Your name">
+      <small *ngIf="registerForm.controls.name.touched && registerForm.controls.name.invalid" class="error">Name is required</small>
+    </label>
+
+    <label>
+      <span>Email</span>
+      <input type="email" formControlName="email" placeholder="you@email.com">
+      <small *ngIf="registerForm.controls.email.touched && registerForm.controls.email.invalid" class="error">Valid email required</small>
+    </label>
+
+    <label>
+      <span>Password</span>
+      <input type="password" formControlName="password" placeholder="••••••••">
+      <small *ngIf="registerForm.controls.password.touched && registerForm.controls.password.invalid" class="error">
+        Min 6 characters
+      </small>
+    </label>
+
+    <p *ngIf="error" class="error">{{ error }}</p>
+
+    <button class="btn primary" type="submit" [disabled]="submitting">Create account</button>
+    <p class="hint">Already registered? <a routerLink="/auth/login" (click)="switchMode('login')">Login</a></p>
+  </form>
+</section>

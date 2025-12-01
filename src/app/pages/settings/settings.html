@@ -1,0 +1,82 @@
+<div class="settings-grid">
+  <section class="card">
+    <div class="section-title">Profile & preferences</div>
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+      <label>
+        <span>Name</span>
+        <input type="text" formControlName="name" placeholder="Your name">
+        <small *ngIf="profileForm.controls.name.touched && profileForm.controls.name.invalid" class="error">
+          Name is required
+        </small>
+      </label>
+      <label>
+        <span>Email</span>
+        <input type="email" formControlName="email" placeholder="name@email.com">
+        <small *ngIf="profileForm.controls.email.touched && profileForm.controls.email.invalid" class="error">
+          Enter a valid email
+        </small>
+      </label>
+
+      <div class="row">
+        <label>
+          <span>Currency</span>
+          <select formControlName="currency">
+            <option>USD</option>
+            <option>EUR</option>
+            <option>EGP</option>
+            <option>SAR</option>
+          </select>
+        </label>
+        <label>
+          <span>Monthly target</span>
+          <input type="number" formControlName="monthlyTarget" min="0">
+        </label>
+        <label>
+          <span>Savings goal</span>
+          <input type="number" formControlName="savingsGoal" min="0">
+        </label>
+      </div>
+
+      <label class="toggle">
+        <input type="checkbox" formControlName="notifications">
+        <span>Send notifications and reminders</span>
+      </label>
+
+      <div class="actions">
+        <button class="btn primary" type="submit" [disabled]="savingProfile">Save profile</button>
+        <button class="btn ghost" type="button" (click)="profileForm.reset(profileForm.getRawValue())" [disabled]="savingProfile">
+          Reset
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card" *ngIf="categories$ | async as categories">
+    <div class="section-title">Categories</div>
+    <form [formGroup]="categoryForm" (ngSubmit)="addCategory()" class="category-form">
+      <label>
+        <span>Name</span>
+        <input type="text" formControlName="name" placeholder="e.g. Wellness">
+      </label>
+      <label>
+        <span>Color</span>
+        <input type="color" formControlName="color">
+      </label>
+      <label>
+        <span>Type</span>
+        <select formControlName="type">
+          <option value="expense">Expense</option>
+          <option value="income">Income</option>
+        </select>
+      </label>
+      <button class="btn primary" type="submit" [disabled]="savingCategory">Add category</button>
+    </form>
+
+    <div class="category-list">
+      <div class="pill" *ngFor="let cat of categories">
+        <span class="dot" [style.background]="cat.color"></span>
+        {{ cat.name }} · {{ cat.type | titlecase }}
+      </div>
+    </div>
+  </section>
+</div>

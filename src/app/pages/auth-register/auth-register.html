@@ -1,0 +1,31 @@
+<section class="auth-shell card">
+  <h2>Create your account</h2>
+  <p class="muted">Start tracking budgets, expenses, and savings goals.</p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+    <label>
+      <span>Name</span>
+      <input type="text" formControlName="name" placeholder="Your name">
+      <small *ngIf="form.controls.name.touched && form.controls.name.invalid" class="error">Name is required</small>
+    </label>
+
+    <label>
+      <span>Email</span>
+      <input type="email" formControlName="email" placeholder="you@email.com">
+      <small *ngIf="form.controls.email.touched && form.controls.email.invalid" class="error">Valid email required</small>
+    </label>
+
+    <label>
+      <span>Password</span>
+      <input type="password" formControlName="password" placeholder="••••••••">
+      <small *ngIf="form.controls.password.touched && form.controls.password.invalid" class="error">
+        Min 6 characters
+      </small>
+    </label>
+
+    <p *ngIf="error" class="error">{{ error }}</p>
+
+    <button class="btn primary" type="submit" [disabled]="submitting">Create account</button>
+    <p class="hint">Already registered? <a routerLink="/auth/login">Sign in</a></p>
+  </form>
+</section>

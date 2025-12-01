@@ -1,0 +1,53 @@
+<section class="card" *ngIf="cashflow$ | async as cash">
+  <div class="section-title">Cashflow snapshot</div>
+  <div class="cash-grid">
+    <div>
+      <p class="muted">Income</p>
+      <h3 class="positive">{{ cash.income | currency }}</h3>
+    </div>
+    <div>
+      <p class="muted">Expenses</p>
+      <h3 class="negative">{{ cash.expenses | currency }}</h3>
+    </div>
+    <div>
+      <p class="muted">Balance</p>
+      <h3 [ngClass]="{ positive: cash.balance >= 0, negative: cash.balance < 0 }">
+        {{ cash.balance | currency }}
+      </h3>
+    </div>
+  </div>
+</section>
+
+<section class="card" *ngIf="categorySpend$ | async as categories">
+  <div class="section-title">Spend by category</div>
+  <div class="category-row" *ngFor="let cat of categories">
+    <div>
+      <p class="category-name">{{ cat.category }}</p>
+      <p class="muted">{{ cat.total | currency }}</p>
+    </div>
+    <div class="bar">
+      <span [style.width.%]="cat.percent"></span>
+    </div>
+    <p class="percent">{{ cat.percent }}%</p>
+  </div>
+</section>
+
+<section class="card" *ngIf="monthly$ | async as months">
+  <div class="section-title">Monthly breakdown</div>
+  <div class="table">
+    <div class="table-row head">
+      <span>Period</span>
+      <span>Income</span>
+      <span>Expenses</span>
+      <span>Balance</span>
+    </div>
+    <div class="table-row" *ngFor="let month of months">
+      <span>{{ month.label }}</span>
+      <span class="positive">{{ month.income | currency }}</span>
+      <span class="negative">{{ month.expenses | currency }}</span>
+      <span [ngClass]="{ positive: month.balance >= 0, negative: month.balance < 0 }">
+        {{ month.balance | currency }}
+      </span>
+    </div>
+  </div>
+</section>

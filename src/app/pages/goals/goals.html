@@ -1,0 +1,77 @@
+<div class="panel-grid">
+  <section class="card form-card" *ngIf="categories$ | async as categories">
+    <div class="section-title">{{ editing ? 'Edit goal' : 'Create goal' }}</div>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="goal-form">
+      <label>
+        <span>Title</span>
+        <input type="text" formControlName="title" placeholder="e.g. New laptop fund">
+        <small *ngIf="form.controls.title.touched && form.controls.title.invalid" class="error">Title required</small>
+      </label>
+
+      <div class="row">
+        <label>
+          <span>Target amount</span>
+          <input type="number" formControlName="targetAmount" min="50" step="50">
+        </label>
+        <label>
+          <span>Current saved</span>
+          <input type="number" formControlName="currentAmount" min="0" step="10">
+        </label>
+      </div>
+
+      <div class="row">
+        <label>
+          <span>Due date (optional)</span>
+          <input type="date" formControlName="dueDate">
+        </label>
+        <label>
+          <span>Category (optional)</span>
+          <select formControlName="categoryId">
+            <option [ngValue]="null">Uncategorized</option>
+            <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        <span>Notes</span>
+        <textarea formControlName="note" rows="3" placeholder="Add context or steps"></textarea>
+      </label>
+
+      <div class="actions">
+        <button type="submit" class="btn primary" [disabled]="submitting">
+          {{ editing ? 'Update goal' : 'Add goal' }}
+        </button>
+        <button type="button" class="btn ghost" (click)="reset()" [disabled]="submitting">Clear</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card goals-list" *ngIf="goals$ | async as goals">
+    <div class="section-title">Goals</div>
+    <div class="goal-row" *ngFor="let goal of goals">
+      <div>
+        <p class="goal-title">{{ goal.title }}</p>
+        <p class="muted">
+          Target {{ goal.targetAmount | currency }} · Saved {{ goal.currentAmount | currency }}
+          <ng-container *ngIf="goal.dueDate"> · Due {{ goal.dueDate | date:'mediumDate' }}</ng-container>
+        </p>
+        <div class="progress">
+          <div class="progress-bar" [style.width.%]="progress(goal)"></div>
+        </div>
+        <p class="muted">{{ progress(goal) }}% complete</p>
+        <p class="muted" *ngIf="goal.note">{{ goal.note }}</p>
+      </div>
+      <div class="row-actions">
+        <div class="contribute">
+          <input type="number" min="1" step="10" #amt placeholder="+ amount">
+          <button class="btn primary" type="button" (click)="addContribution(goal, amt.valueAsNumber); amt.value = ''" [disabled]="submitting">
+            Add saved
+          </button>
+        </div>
+        <button class="btn ghost" type="button" (click)="edit(goal)" [disabled]="submitting">Edit</button>
+        <button class="btn danger" type="button" (click)="delete(goal)" [disabled]="submitting">Delete</button>
+      </div>
+    </div>
+  </section>
+</div>

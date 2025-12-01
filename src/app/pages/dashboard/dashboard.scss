@@ -1,0 +1,139 @@
+.grid {
+  display: grid;
+  gap: 14px;
+}
+
+.grid.kpis {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.grid.two {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.card.highlight {
+  background: linear-gradient(120deg, rgba(124, 58, 237, 0.15), rgba(34, 197, 94, 0.08));
+}
+
+.label {
+  margin: 0;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+}
+
+.muted {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+h2 {
+  margin: 8px 0;
+  font-size: 26px;
+}
+
+.progress {
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin: 10px 0 6px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #facc15);
+  border-radius: 999px;
+  transition: width 200ms ease;
+}
+
+.category-row,
+.month-row,
+.transaction-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.category-row:last-child,
+.month-row:last-child,
+.transaction-row:last-child,
+.goal-row:last-child {
+  border-bottom: none;
+}
+
+.category-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.category-name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.bar {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.bar span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7c3aed, #22c55e);
+}
+
+.percent {
+  margin: 0;
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+.goal-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.goal-head {
+  grid-column: 1 / -1;
+}
+
+.positive {
+  color: #4ade80;
+}
+
+.negative {
+  color: #fb7185;
+}
