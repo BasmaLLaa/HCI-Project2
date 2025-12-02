@@ -62,13 +62,13 @@
         <p class="muted">{{ progress(goal) }}% complete</p>
         <p class="muted" *ngIf="goal.note">{{ goal.note }}</p>
       </div>
-      <div class="row-actions">
-        <div class="contribute">
-          <input type="number" min="1" step="10" #amt placeholder="+ amount">
-          <button class="btn primary" type="button" (click)="addContribution(goal, amt.valueAsNumber); amt.value = ''" [disabled]="submitting">
-            Add saved
-          </button>
-        </div>
+        <div class="row-actions">
+          <div class="contribute">
+            <input type="number" min="1" step="10" #amt placeholder="+ amount">
+            <button class="btn primary" type="button" (click)="addContribution(goal, amt.valueAsNumber); amt.value = ''" [disabled]="submitting">
+              Add saved
+            </button>
+          </div>
         <button class="btn ghost" type="button" (click)="edit(goal)" [disabled]="submitting">Edit</button>
         <button class="btn danger" type="button" (click)="delete(goal)" [disabled]="submitting">Delete</button>
       </div>

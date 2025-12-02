@@ -3,28 +3,29 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 input {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--stroke);
+  background: var(--control-bg);
+  border: 1px solid var(--control-border);
   border-radius: 12px;
-  padding: 10px 12px;
-  color: #e2e8f0;
+  padding: 12px 14px;
+  color: var(--text-primary);
 }
 
 .hint {
@@ -34,5 +35,5 @@ input {
 
 .error {
   color: #f87171;
-  font-size: 12px;
+  font-size: 13px;
 }

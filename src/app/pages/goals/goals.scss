@@ -1,49 +1,50 @@
 .panel-grid {
   display: grid;
   grid-template-columns: 380px 1fr;
-  gap: 14px;
+  gap: 24px;
 }
 
 .goal-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
 }
 
 label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 input,
 select,
 textarea {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--stroke);
+  background: var(--control-bg);
+  border: 1px solid var(--control-border);
   border-radius: 12px;
-  padding: 10px 12px;
-  color: #e2e8f0;
+  padding: 12px 14px;
+  color: var(--text-primary);
 }
 
 .row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 10px;
+  gap: 14px;
 }
 
 .goals-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 18px;
 }
 
 .goal-row {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 10px;
-  padding: 12px;
+  gap: 14px;
+  padding: 18px;
   border: 1px solid var(--stroke);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.02);
@@ -52,12 +53,12 @@ textarea {
 .goal-title {
   margin: 0;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 21px;
 }
 
 .progress {
   width: 100%;
-  height: 8px;
+  height: 10px;
   background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
   overflow: hidden;
@@ -71,31 +72,25 @@ textarea {
 
 .row-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-}
-
-.btn.danger {
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #fca5a5;
-  padding: 8px 12px;
+  align-items: center;
 }
 
 .contribute {
   display: flex;
-  gap: 6px;
+  gap: 10px;
   align-items: center;
 }
 
 .contribute input {
   width: 110px;
-  padding: 8px 10px;
+  padding: 10px 12px;
 }
 
 .error {
   color: #f87171;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 @media (max-width: 900px) {

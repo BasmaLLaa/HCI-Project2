@@ -1,7 +1,7 @@
 .panel-grid {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 14px;
+  grid-template-columns: 420px 1fr;
+  gap: 20px;
 }
 
 .form-card {
@@ -11,47 +11,41 @@
 .budget-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 input,
 select {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--stroke);
+  background: var(--control-bg);
+  border: 1px solid var(--control-border);
   border-radius: 12px;
-  padding: 10px 12px;
-  color: #e2e8f0;
+  padding: 12px 14px;
+  color: var(--text-primary);
   font-size: 15px;
 }
 
 .category-pills {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .pill-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .pill input {
   accent-color: var(--accent);
-}
-
-body.theme-light input,
-body.theme-light select {
-  background: #f8fafc;
-  border: 1px solid #d1d5db;
-  color: #0f172a;
 }
 
 body.theme-light .budget-row {
@@ -65,20 +59,20 @@ body.theme-light .budgets-card {
 
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .btn.primary {
   background: linear-gradient(135deg, var(--accent), #4f46e5);
-  color: #f8fafc;
-  padding: 10px 14px;
+  color: #fff;
+  padding: 12px 16px;
 }
 
 .btn.ghost {
-  background: rgba(255, 255, 255, 0.04);
-  color: #e2e8f0;
-  border: 1px solid var(--stroke);
-  padding: 10px 14px;
+  background: var(--control-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--control-border);
+  padding: 12px 16px;
 }
 
 .btn.danger {
@@ -91,41 +85,42 @@ body.theme-light .budgets-card {
 .budgets-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .budget-row {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
-  gap: 10px;
-  padding: 12px 10px;
+  gap: 16px;
+  padding: 16px 14px;
   border-radius: 12px;
   border: 1px solid var(--stroke);
   background: rgba(255, 255, 255, 0.02);
+  align-items: start;
 }
 
 .budget-name {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
 }
 
 .budget-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .budget-numbers {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 
 .progress {
   width: 100%;
-  height: 8px;
+  height: 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.06);
   overflow: hidden;
@@ -148,7 +143,7 @@ body.theme-light .budgets-card {
 
 .error {
   color: #f87171;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 @media (max-width: 900px) {
