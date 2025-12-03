@@ -4,11 +4,12 @@ import { Router, RouterLink } from '@angular/router';
 import { NgIf } from '@angular/common';
 
 import { AuthService } from '../../services/auth.service';
+import { MATERIAL_IMPORTS } from '../../material';
 
 @Component({
   selector: 'app-auth-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, NgIf],
+  imports: [ReactiveFormsModule, RouterLink, NgIf, ...MATERIAL_IMPORTS],
   templateUrl: './auth-login.html',
   styleUrl: './auth-login.scss'
 })

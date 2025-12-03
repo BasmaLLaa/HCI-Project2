@@ -152,6 +152,35 @@ body.theme-light .cta.primary {
   background: rgba(255, 255, 255, 0.03);
 }
 
+/* Global Material form-field styling to match the app's inputs */
+.mat-mdc-form-field {
+  width: 100%;
+  --mdc-outlined-text-field-container-color: var(--control-bg);
+  --mdc-outlined-text-field-focus-outline-color: var(--accent);
+  --mdc-outlined-text-field-hover-outline-color: var(--control-border);
+  --mdc-outlined-text-field-outline-color: var(--control-border);
+  --mdc-outlined-text-field-container-shape: 12px;
+  --mdc-outlined-text-field-label-text-color: var(--muted);
+  --mdc-outlined-text-field-focus-label-text-color: var(--text-primary);
+  --mdc-outlined-text-field-input-text-color: var(--text-primary);
+  --mdc-outlined-text-field-input-text-placeholder-color: var(--muted);
+  --mdc-outlined-text-field-outline-width: 1px;
+}
+
+.mat-mdc-form-field-infix {
+  min-height: 58px;
+  padding: 12px 0;
+}
+
+.mat-mdc-select-arrow {
+  color: var(--text-primary);
+}
+
+.mat-mdc-select-value,
+input.mat-mdc-input-element {
+  font-weight: 600;
+}
+
 body.theme-light .cta.ghost {
   background: #ffffff;
   border-color: #d1d5db;

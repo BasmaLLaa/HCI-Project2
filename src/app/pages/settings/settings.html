@@ -4,14 +4,14 @@
     <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
       <label>
         <span>Name</span>
-        <input type="text" formControlName="name" placeholder="Your name">
+        <input type="text" formControlName="name" placeholder="Your name" [readonly]="lockUserFields">
         <small *ngIf="profileForm.controls.name.touched && profileForm.controls.name.invalid" class="error">
           Name is required
         </small>
       </label>
       <label>
         <span>Email</span>
-        <input type="email" formControlName="email" placeholder="name@email.com">
+        <input type="email" formControlName="email" placeholder="name@email.com" [readonly]="lockUserFields">
         <small *ngIf="profileForm.controls.email.touched && profileForm.controls.email.invalid" class="error">
           Enter a valid email
         </small>

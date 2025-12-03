@@ -7,6 +7,7 @@ import { Category, CategoryType } from '../../models/category';
 import { ProfileSettings } from '../../models/profile-settings';
 import { CategoryService } from '../../services/category.service';
 import { SettingsService } from '../../services/settings.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-settings',
@@ -19,6 +20,7 @@ export class SettingsComponent implements OnInit {
   private fb = inject(FormBuilder);
   private settingsService = inject(SettingsService);
   private categoryService = inject(CategoryService);
+  private authService = inject(AuthService);
 
   profileForm = this.fb.group({
     id: [1],
@@ -39,10 +41,13 @@ export class SettingsComponent implements OnInit {
   categories$ = this.categoryService.categories$;
   savingProfile = false;
   savingCategory = false;
+  lockUserFields = false;
 
   ngOnInit(): void {
+    this.syncUserDetails();
     this.settingsService.getProfile().subscribe((profile: ProfileSettings) => {
       this.profileForm.patchValue(profile);
+      this.syncUserDetails();
     });
   }
 
@@ -84,5 +89,20 @@ export class SettingsComponent implements OnInit {
       },
       complete: () => (this.savingCategory = false)
     });
+  }
+
+  private syncUserDetails(): void {
+    const user = this.authService.currentUser();
+    if (!user) {
+      return;
+    }
+
+    this.profileForm.patchValue({
+      name: user.name,
+      email: user.email
+    });
+    this.profileForm.controls.name.disable({ emitEvent: false });
+    this.profileForm.controls.email.disable({ emitEvent: false });
+    this.lockUserFields = true;
   }
 }

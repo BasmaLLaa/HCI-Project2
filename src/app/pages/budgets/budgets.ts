@@ -1,4 +1,4 @@
-import { AsyncPipe, CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, NgFor, NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -7,11 +7,12 @@ import { Budget, BudgetPeriod } from '../../models/budget';
 import { Category } from '../../models/category';
 import { BudgetService } from '../../services/budget.service';
 import { CategoryService } from '../../services/category.service';
+import { MATERIAL_IMPORTS } from '../../material';
 
 @Component({
   selector: 'app-budgets',
   standalone: true,
-  imports: [AsyncPipe, CurrencyPipe, NgClass, NgFor, NgIf, ReactiveFormsModule],
+  imports: [AsyncPipe, CurrencyPipe, NgFor, NgIf, ReactiveFormsModule, ...MATERIAL_IMPORTS],
   templateUrl: './budgets.html',
   styleUrl: './budgets.scss'
 })

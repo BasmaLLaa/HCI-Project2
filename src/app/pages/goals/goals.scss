@@ -40,6 +40,19 @@ textarea {
   gap: 18px;
 }
 
+.goals-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.goals-header input {
+  min-width: 200px;
+  max-width: 260px;
+}
+
 .goal-row {
   display: grid;
   grid-template-columns: 1fr auto;

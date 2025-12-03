@@ -48,8 +48,15 @@
   </section>
 
   <section class="card goals-list" *ngIf="goals$ | async as goals">
-    <div class="section-title">Goals</div>
-    <div class="goal-row" *ngFor="let goal of goals">
+    <div class="goals-header">
+      <div class="section-title">Goals ({{ goalCount }})</div>
+      <input
+        type="search"
+        placeholder="Filter goals"
+        [(ngModel)]="filterText"
+        aria-label="Filter goals">
+    </div>
+    <div class="goal-row" *ngFor="let goal of filterGoals(goals); trackBy: trackByGoal">
       <div>
         <p class="goal-title">{{ goal.title }}</p>
         <p class="muted">
@@ -57,7 +64,12 @@
           <ng-container *ngIf="goal.dueDate"> · Due {{ goal.dueDate | date:'mediumDate' }}</ng-container>
         </p>
         <div class="progress">
-          <div class="progress-bar" [style.width.%]="progress(goal)"></div>
+          <div
+            class="progress-bar"
+            [ngStyle]="{
+              width: progress(goal) + '%',
+              background: progress(goal) >= 100 ? '#22c55e' : 'linear-gradient(90deg, #22c55e, #7c3aed)'
+            }"></div>
         </div>
         <p class="muted">{{ progress(goal) }}% complete</p>
         <p class="muted" *ngIf="goal.note">{{ goal.note }}</p>

@@ -3,29 +3,29 @@
   <p class="muted">Start tracking budgets, expenses, and savings goals.</p>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
-    <label>
-      <span>Name</span>
-      <input type="text" formControlName="name" placeholder="Your name">
-      <small *ngIf="form.controls.name.touched && form.controls.name.invalid" class="error">Name is required</small>
-    </label>
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput type="text" formControlName="name" placeholder="Your name">
+      <mat-error *ngIf="form.controls.name.touched && form.controls.name.invalid">Name is required</mat-error>
+    </mat-form-field>
 
-    <label>
-      <span>Email</span>
-      <input type="email" formControlName="email" placeholder="you@email.com">
-      <small *ngIf="form.controls.email.touched && form.controls.email.invalid" class="error">Valid email required</small>
-    </label>
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="you@email.com">
+      <mat-error *ngIf="form.controls.email.touched && form.controls.email.invalid">Valid email required</mat-error>
+    </mat-form-field>
 
-    <label>
-      <span>Password</span>
-      <input type="password" formControlName="password" placeholder="••••••••">
-      <small *ngIf="form.controls.password.touched && form.controls.password.invalid" class="error">
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" formControlName="password" placeholder="••••••••">
+      <mat-error *ngIf="form.controls.password.touched && form.controls.password.invalid">
         Min 6 characters
-      </small>
-    </label>
+      </mat-error>
+    </mat-form-field>
 
     <p *ngIf="error" class="error">{{ error }}</p>
 
-    <button class="btn primary" type="submit" [disabled]="submitting">Create account</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="submitting">Create account</button>
     <p class="hint">Already registered? <a routerLink="/auth/login">Sign in</a></p>
   </form>
 </section>

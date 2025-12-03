@@ -1,7 +1,7 @@
-import { AsyncPipe, CurrencyPipe, DatePipe, NgFor, NgIf } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { AsyncPipe, CurrencyPipe, DatePipe, NgFor, NgIf, NgStyle } from '@angular/common';
+import { Component, OnDestroy, inject } from '@angular/core';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { Goal } from '../../models/goal';
 import { Category } from '../../models/category';
@@ -11,19 +11,22 @@ import { CategoryService } from '../../services/category.service';
 @Component({
   selector: 'app-goals',
   standalone: true,
-  imports: [AsyncPipe, CurrencyPipe, DatePipe, NgFor, NgIf, ReactiveFormsModule],
+  imports: [AsyncPipe, CurrencyPipe, DatePipe, FormsModule, NgFor, NgIf, NgStyle, ReactiveFormsModule],
   templateUrl: './goals.html',
   styleUrl: './goals.scss'
 })
-export class GoalsComponent {
+export class GoalsComponent implements OnDestroy {
   private fb = inject(FormBuilder);
   private goalService = inject(GoalService);
   private categoryService = inject(CategoryService);
+  private destroy$ = new Subject<void>();
 
   goals$: Observable<Goal[]> = this.goalService.getGoals();
   categories$ = this.categoryService.categories$;
   submitting = false;
   editing?: Goal;
+  filterText = '';
+  goalCount = 0;
 
   form = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
@@ -33,6 +36,13 @@ export class GoalsComponent {
     categoryId: [null as number | null],
     note: ['']
   });
+
+  constructor() {
+    this.goalService
+      .getGoals()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((goals) => (this.goalCount = goals.length));
+  }
 
   refresh(): void {
     this.goals$ = this.goalService.getGoals();
@@ -137,5 +147,22 @@ export class GoalsComponent {
       next: () => this.refresh(),
       complete: () => (this.submitting = false)
     });
+  }
+
+  filterGoals(goals: Goal[]): Goal[] {
+    const term = this.filterText.trim().toLowerCase();
+    if (!term) {
+      return goals;
+    }
+    return goals.filter((g) => g.title.toLowerCase().includes(term));
+  }
+
+  trackByGoal(index: number, goal: Goal): number {
+    return goal.id;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

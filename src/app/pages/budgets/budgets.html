@@ -2,54 +2,48 @@
   <section class="card form-card" *ngIf="categories$ | async as categories">
     <div class="section-title">Create or edit budget</div>
     <form [formGroup]="form" (ngSubmit)="submit()" class="budget-form">
-      <label>
-        <span>Name</span>
-        <input type="text" formControlName="name" placeholder="e.g. Groceries">
-        <small *ngIf="form.controls.name.touched && form.controls.name.invalid" class="error">Name is required</small>
-      </label>
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput type="text" formControlName="name" placeholder="e.g. Groceries">
+        <mat-error *ngIf="form.controls.name.touched && form.controls.name.invalid">Name is required</mat-error>
+      </mat-form-field>
 
-      <label>
-        <span>Limit</span>
-        <input type="number" formControlName="limit" min="50" step="50">
-        <small *ngIf="form.controls.limit.touched && form.controls.limit.invalid" class="error">
+      <mat-form-field appearance="outline">
+        <mat-label>Limit</mat-label>
+        <input matInput type="number" formControlName="limit" min="50" step="50">
+        <mat-error *ngIf="form.controls.limit.touched && form.controls.limit.invalid">
           Enter at least 50
-        </small>
-      </label>
+        </mat-error>
+      </mat-form-field>
 
-      <label>
-        <span>Period</span>
-        <select formControlName="period">
-          <option>Weekly</option>
-          <option>Monthly</option>
-          <option>Quarterly</option>
-          <option>Yearly</option>
-        </select>
-      </label>
+      <mat-form-field appearance="outline">
+        <mat-label>Period</mat-label>
+        <mat-select formControlName="period">
+          <mat-option value="Weekly">Weekly</mat-option>
+          <mat-option value="Monthly">Monthly</mat-option>
+          <mat-option value="Quarterly">Quarterly</mat-option>
+          <mat-option value="Yearly">Yearly</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-      <div class="category-pills">
-        <p>Categories</p>
-        <div class="pill-row">
-          <label class="pill" *ngFor="let cat of categories">
-            <input
-              type="checkbox"
-              [value]="cat.id"
-              (change)="toggleCategory(cat.id, $event.target.checked)"
-              [checked]="form.controls.categoryIds.value?.includes(cat.id)"
-            >
+      <mat-form-field appearance="outline">
+        <mat-label>Categories</mat-label>
+        <mat-select formControlName="categoryIds" multiple>
+          <mat-option *ngFor="let cat of categories" [value]="cat.id">
             <span class="dot" [style.background]="cat.color"></span>
             {{ cat.name }}
-          </label>
-        </div>
-        <small *ngIf="form.controls.categoryIds.touched && form.controls.categoryIds.invalid" class="error">
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.controls.categoryIds.touched && form.controls.categoryIds.invalid">
           Pick at least one category
-        </small>
-      </div>
+        </mat-error>
+      </mat-form-field>
 
       <div class="actions">
-        <button type="submit" class="btn primary" [disabled]="submitting">
+        <button mat-flat-button color="primary" type="submit" [disabled]="submitting">
           {{ editingBudget ? 'Update budget' : 'Create budget' }}
         </button>
-        <button type="button" class="btn ghost" (click)="resetForm()" [disabled]="submitting">Reset</button>
+        <button mat-stroked-button type="button" (click)="resetForm()" [disabled]="submitting">Reset</button>
       </div>
     </form>
   </section>
@@ -60,7 +54,7 @@
       <div>
         <p class="budget-name">{{ budget.name }}</p>
         <p class="muted">
-          {{ budget.period }} · {{ budget.categoryIds.length }} categories · Limit {{ budget.limit | currency }}
+          {{ budget.period }} | {{ budget.categoryIds.length }} categories | Limit {{ budget.limit | currency }}
         </p>
         <div class="budget-tags" *ngIf="categories$ | async as cats">
           <span class="pill" *ngFor="let id of budget.categoryIds">
@@ -72,16 +66,16 @@
 
       <div class="budget-numbers">
         <p>{{ budget.spent | currency }} / {{ budget.limit | currency }}</p>
-        <div class="progress">
-          <div
-            class="progress-bar"
-            [ngClass]="{ warn: budget.spent > budget.limit * 0.8 }"
-            [style.width.%]="(budget.spent / budget.limit) * 100"
-          ></div>
-        </div>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="(budget.spent / budget.limit) * 100"
+          [color]="budget.spent > budget.limit * 0.8 ? 'warn' : 'accent'">
+        </mat-progress-bar>
         <div class="row-actions">
-          <button class="btn ghost" type="button" (click)="edit(budget)" [disabled]="submitting">Edit</button>
-          <button class="btn danger" type="button" (click)="delete(budget)" [disabled]="submitting">Delete</button>
+          <button mat-stroked-button type="button" (click)="edit(budget)" [disabled]="submitting">Edit</button>
+          <button mat-flat-button color="warn" type="button" (click)="delete(budget)" [disabled]="submitting">
+            Delete
+          </button>
         </div>
       </div>
     </div>

@@ -9,11 +9,24 @@ import { Transaction, TransactionType } from '../../models/transaction';
 import { BudgetService } from '../../services/budget.service';
 import { CategoryService } from '../../services/category.service';
 import { TransactionService } from '../../services/transaction.service';
+import { MATERIAL_IMPORTS } from '../../material';
+import { StatusPillComponent } from '../../components/status-pill/status-pill';
 
 @Component({
   selector: 'app-transactions',
   standalone: true,
-  imports: [AsyncPipe, CurrencyPipe, DatePipe, NgClass, NgFor, NgIf, ReactiveFormsModule, TitleCasePipe],
+  imports: [
+    AsyncPipe,
+    CurrencyPipe,
+    DatePipe,
+    NgClass,
+    NgFor,
+    NgIf,
+    ReactiveFormsModule,
+    TitleCasePipe,
+    StatusPillComponent,
+    ...MATERIAL_IMPORTS
+  ],
   templateUrl: './transactions.html',
   styleUrl: './transactions.scss'
 })
@@ -134,5 +147,9 @@ export class TransactionsComponent {
 
   categoryName(categories: Category[] | null, id: number): string {
     return categories?.find((c) => c.id === id)?.name ?? 'Other';
+  }
+
+  trackByTx(index: number, tx: Transaction): number {
+    return tx.id;
   }
 }
