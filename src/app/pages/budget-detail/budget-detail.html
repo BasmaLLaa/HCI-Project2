@@ -1,0 +1,42 @@
+@if (budget$ | async; as budget) {
+  <section class="card detail">
+    <div class="detail__head">
+      <button class="btn ghost" type="button" (click)="goBack()">&larr; Back to budgets</button>
+      <div>
+        <p class="label">Budget detail</p>
+        <h2>{{ budget.name }}</h2>
+        <p class="muted">
+          {{ budget.period }} budget AA§ Limit {{ budget.limit | appCurrency }} AA§ Categories
+          {{ budget.categoryIds.length }}
+        </p>
+      </div>
+    </div>
+
+    <app-projected-card>
+      <div card-title>Categories</div>
+      @if (categories$ | async; as categories) {
+        <ul class="category-list">
+          @for (id of budget.categoryIds; track $index) {
+            <li>
+              <span class="dot"></span>
+              {{ categoryName(id, categories) }}
+            </li>
+          }
+        </ul>
+      }
+      <div card-footer>
+        Spent {{ budget.spent | appCurrency }} out of {{ budget.limit | appCurrency }}
+      </div>
+    </app-projected-card>
+
+    <div class="detail__cta">
+      <a class="btn primary" [routerLink]="['/transactions']">Log a transaction</a>
+    </div>
+  </section>
+} @else {
+  <div class="card">
+    <p class="section-title">Budget not found</p>
+    <p class="muted">Check the URL or pick a budget from the list.</p>
+    <button class="btn ghost" type="button" (click)="goBack()">Return</button>
+  </div>
+}

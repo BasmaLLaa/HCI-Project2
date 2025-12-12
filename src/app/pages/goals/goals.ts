@@ -1,4 +1,4 @@
-import { AsyncPipe, CurrencyPipe, DatePipe, NgFor, NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, DatePipe, NgFor, NgIf, NgStyle } from '@angular/common';
 import { Component, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, Subject, takeUntil } from 'rxjs';
@@ -7,11 +7,12 @@ import { Goal } from '../../models/goal';
 import { Category } from '../../models/category';
 import { GoalService } from '../../services/goal.service';
 import { CategoryService } from '../../services/category.service';
+import { AppCurrencyPipe } from '../../pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-goals',
   standalone: true,
-  imports: [AsyncPipe, CurrencyPipe, DatePipe, FormsModule, NgFor, NgIf, NgStyle, ReactiveFormsModule],
+  imports: [AsyncPipe, AppCurrencyPipe, DatePipe, FormsModule, NgFor, NgIf, NgStyle, ReactiveFormsModule],
   templateUrl: './goals.html',
   styleUrl: './goals.scss'
 })

@@ -1,5 +1,5 @@
 <div class="app-shell">
-  <ng-container *ngIf="showShell()">
+  @if (showShell()) {
     <header class="topbar">
       <div class="brand">
         <span class="brand-mark"></span>
@@ -10,14 +10,15 @@
       </div>
 
       <nav class="main-nav">
-        <a
-          *ngFor="let item of navItems"
-          [routerLink]="item.path"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          {{ item.label }}
-        </a>
+        @for (item of navItems; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ item.label }}
+          </a>
+        }
       </nav>
 
       <div class="theme-toggle">
@@ -32,49 +33,57 @@
         <div class="avatar">{{ (userName() || 'G').slice(0,2).toUpperCase() }}</div>
         <div>
           <p class="user-name">{{ userName() }}</p>
-          <p class="user-plan" *ngIf="isLoggedIn(); else guest">Personal plan</p>
-          <ng-template #guest><span class="user-plan">Guest</span></ng-template>
+          @if (isLoggedIn()) {
+            <p class="user-plan">Personal plan</p>
+          } @else {
+            <span class="user-plan">Guest</span>
+          }
         </div>
         <div class="auth-actions">
-          <button class="btn ghost" *ngIf="!isLoggedIn()" (click)="login()">Sign in</button>
-          <button class="btn primary" *ngIf="!isLoggedIn()" (click)="gotoRegister()">Create account</button>
-          <button class="btn ghost" *ngIf="isLoggedIn()" (click)="logout()">Sign out</button>
+          @if (!isLoggedIn()) {
+            <button class="btn ghost" (click)="login()">Sign in</button>
+            <button class="btn primary" (click)="gotoRegister()">Create account</button>
+          } @else {
+            <button class="btn ghost" (click)="logout()">Sign out</button>
+          }
         </div>
       </div>
     </header>
 
-    <section class="hero" *ngIf="heroKpis$ | async as hero">
-      <div>
-        <p class="eyebrow">Budget dashboard</p>
-        <h1>
-          Keep your spending under control
-          <span class="accent">with clarity.</span>
-        </h1>
-        <p class="lede">
-          Build budgets, add transactions, and watch your cashflow stay on track with instant feedback.
-        </p>
-        <div class="cta-row">
-          <a class="cta primary" routerLink="/budgets">Create budget</a>
-          <a class="cta ghost" routerLink="/transactions">Log transaction</a>
+    @if (heroKpis$ | async; as hero) {
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Budget dashboard</p>
+          <h1>
+            Keep your spending under control
+            <span class="accent">with clarity.</span>
+          </h1>
+          <p class="lede">
+            Build budgets, add transactions, and watch your cashflow stay on track with instant feedback.
+          </p>
+          <div class="cta-row">
+            <a class="cta primary" routerLink="/budgets">Create budget</a>
+            <a class="cta ghost" routerLink="/transactions">Log transaction</a>
+          </div>
         </div>
-      </div>
 
-      <div class="hero-card">
-        <div class="stat">
-          <p class="label">Active budgets</p>
-          <p class="value">{{ hero.activeBudgets }}</p>
+        <div class="hero-card">
+          <div class="stat">
+            <p class="label">Active budgets</p>
+            <p class="value">{{ hero.activeBudgets }}</p>
+          </div>
+          <div class="stat">
+            <p class="label">This month</p>
+            <p class="value positive">{{ hero.income | appCurrency }}</p>
+          </div>
+          <div class="stat">
+            <p class="label">Spent</p>
+            <p class="value negative">-{{ hero.expenses | appCurrency }}</p>
+          </div>
         </div>
-        <div class="stat">
-          <p class="label">This month</p>
-          <p class="value positive">{{ hero.income | currency }}</p>
-        </div>
-        <div class="stat">
-          <p class="label">Spent</p>
-          <p class="value negative">-{{ hero.expenses | currency }}</p>
-        </div>
-      </div>
-    </section>
-  </ng-container>
+      </section>
+    }
+  }
 
   <main class="page-shell">
     <router-outlet></router-outlet>

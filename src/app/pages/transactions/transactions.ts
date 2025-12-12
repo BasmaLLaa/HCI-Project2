@@ -1,4 +1,4 @@
-import { AsyncPipe, CurrencyPipe, DatePipe, NgClass, NgFor, NgIf, TitleCasePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, NgClass, TitleCasePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, map } from 'rxjs';
@@ -11,6 +11,7 @@ import { CategoryService } from '../../services/category.service';
 import { TransactionService } from '../../services/transaction.service';
 import { MATERIAL_IMPORTS } from '../../material';
 import { StatusPillComponent } from '../../components/status-pill/status-pill';
+import { AppCurrencyPipe } from '../../pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-transactions',
@@ -20,10 +21,9 @@ import { StatusPillComponent } from '../../components/status-pill/status-pill';
     CurrencyPipe,
     DatePipe,
     NgClass,
-    NgFor,
-    NgIf,
     ReactiveFormsModule,
     TitleCasePipe,
+    AppCurrencyPipe,
     StatusPillComponent,
     ...MATERIAL_IMPORTS
   ],

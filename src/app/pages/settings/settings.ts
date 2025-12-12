@@ -8,6 +8,7 @@ import { ProfileSettings } from '../../models/profile-settings';
 import { CategoryService } from '../../services/category.service';
 import { SettingsService } from '../../services/settings.service';
 import { AuthService } from '../../services/auth.service';
+import { CurrencyService } from '../../services/currency.service';
 
 @Component({
   selector: 'app-settings',
@@ -21,6 +22,7 @@ export class SettingsComponent implements OnInit {
   private settingsService = inject(SettingsService);
   private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
+  private currencyService = inject(CurrencyService);
 
   profileForm = this.fb.group({
     id: [1],
@@ -47,6 +49,7 @@ export class SettingsComponent implements OnInit {
     this.syncUserDetails();
     this.settingsService.getProfile().subscribe((profile: ProfileSettings) => {
       this.profileForm.patchValue(profile);
+      this.currencyService.setCurrency(profile.currency);
       this.syncUserDetails();
     });
   }
@@ -58,7 +61,9 @@ export class SettingsComponent implements OnInit {
     }
 
     this.savingProfile = true;
-    this.settingsService.updateProfile(this.profileForm.getRawValue() as ProfileSettings).subscribe({
+    const payload = this.profileForm.getRawValue() as ProfileSettings;
+    this.settingsService.updateProfile(payload).subscribe({
+      next: (updated) => this.currencyService.setCurrency(updated.currency),
       complete: () => (this.savingProfile = false)
     });
   }

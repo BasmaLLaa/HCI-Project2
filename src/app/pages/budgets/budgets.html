@@ -54,7 +54,7 @@
       <div>
         <p class="budget-name">{{ budget.name }}</p>
         <p class="muted">
-          {{ budget.period }} | {{ budget.categoryIds.length }} categories | Limit {{ budget.limit | currency }}
+          {{ budget.period }} | {{ budget.categoryIds.length }} categories | Limit {{ budget.limit | appCurrency }}
         </p>
         <div class="budget-tags" *ngIf="categories$ | async as cats">
           <span class="pill" *ngFor="let id of budget.categoryIds">
@@ -65,13 +65,14 @@
       </div>
 
       <div class="budget-numbers">
-        <p>{{ budget.spent | currency }} / {{ budget.limit | currency }}</p>
+        <p>{{ budget.spent | appCurrency }} / {{ budget.limit | appCurrency }}</p>
         <mat-progress-bar
           mode="determinate"
           [value]="(budget.spent / budget.limit) * 100"
           [color]="budget.spent > budget.limit * 0.8 ? 'warn' : 'accent'">
         </mat-progress-bar>
         <div class="row-actions">
+          <a mat-stroked-button color="accent" [routerLink]="['/budgets', budget.id]">View details</a>
           <button mat-stroked-button type="button" (click)="edit(budget)" [disabled]="submitting">Edit</button>
           <button mat-flat-button color="warn" type="button" (click)="delete(budget)" [disabled]="submitting">
             Delete

@@ -60,8 +60,8 @@
       <div>
         <p class="goal-title">{{ goal.title }}</p>
         <p class="muted">
-          Target {{ goal.targetAmount | currency }} · Saved {{ goal.currentAmount | currency }}
-          <ng-container *ngIf="goal.dueDate"> · Due {{ goal.dueDate | date:'mediumDate' }}</ng-container>
+          Target {{ goal.targetAmount | appCurrency }} Aú Saved {{ goal.currentAmount | appCurrency }}
+          <ng-container *ngIf="goal.dueDate"> Aú Due {{ goal.dueDate | date:'mediumDate' }}</ng-container>
         </p>
         <div class="progress">
           <div

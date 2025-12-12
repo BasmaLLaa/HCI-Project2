@@ -1,53 +1,238 @@
-<section class="card" *ngIf="cashflow$ | async as cash">
-  <div class="section-title">Cashflow snapshot</div>
-  <div class="cash-grid">
-    <div>
-      <p class="muted">Income</p>
-      <h3 class="positive">{{ cash.income | currency }}</h3>
-    </div>
-    <div>
-      <p class="muted">Expenses</p>
-      <h3 class="negative">{{ cash.expenses | currency }}</h3>
-    </div>
-    <div>
-      <p class="muted">Balance</p>
-      <h3 [ngClass]="{ positive: cash.balance >= 0, negative: cash.balance < 0 }">
-        {{ cash.balance | currency }}
-      </h3>
+<section class="card header">
+  <div>
+    <p class="eyebrow">Reports</p>
+    <h2>Financial reporting</h2>
+    <p class="muted">Track income vs expenses, budget variance, and savings momentum at a glance.</p>
+  </div>
+  <div class="controls">
+    <label class="muted" for="period">Period</label>
+    <select id="period" name="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange($event)">
+      <option *ngFor="let option of periodOptions" [ngValue]="option.key">{{ option.label }}</option>
+    </select>
+    <div class="custom-range" *ngIf="selectedPeriod === 'custom'">
+      <input
+        type="date"
+        name="start"
+        [(ngModel)]="customStartDate"
+        (change)="applyCustomRange()"
+        aria-label="Start date"
+      />
+      <span class="muted">to</span>
+      <input
+        type="date"
+        name="end"
+        [(ngModel)]="customEndDate"
+        (change)="applyCustomRange()"
+        aria-label="End date"
+      />
     </div>
   </div>
 </section>
 
-<section class="card" *ngIf="categorySpend$ | async as categories">
-  <div class="section-title">Spend by category</div>
-  <div class="category-row" *ngFor="let cat of categories">
-    <div>
-      <p class="category-name">{{ cat.category }}</p>
-      <p class="muted">{{ cat.total | currency }}</p>
+<div class="report-grid">
+  <section class="card" *ngIf="incomeVsExpenses$ | async as income">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Income vs expenses</div>
+        <p class="muted">{{ income.label }}</p>
+      </div>
+      <div class="pill" [ngClass]="{ positive: income.net >= 0, negative: income.net < 0 }">
+        {{ income.net >= 0 ? 'Surplus' : 'Deficit' }} {{ income.net | appCurrency }}
+      </div>
     </div>
-    <div class="bar">
-      <span [style.width.%]="cat.percent"></span>
-    </div>
-    <p class="percent">{{ cat.percent }}%</p>
-  </div>
-</section>
 
-<section class="card" *ngIf="monthly$ | async as months">
-  <div class="section-title">Monthly breakdown</div>
-  <div class="table">
-    <div class="table-row head">
-      <span>Period</span>
+    <div class="summary-grid">
+      <div class="stat">
+        <p class="label">Total income</p>
+        <p class="value positive">{{ income.totalIncome | appCurrency }}</p>
+      </div>
+      <div class="stat">
+        <p class="label">Total expenses</p>
+        <p class="value negative">{{ income.totalExpenses | appCurrency }}</p>
+      </div>
+      <div class="stat">
+        <p class="label">Net balance</p>
+        <p class="value" [ngClass]="{ positive: income.net >= 0, negative: income.net < 0 }">
+          {{ income.net | appCurrency }}
+        </p>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="dot income"></span>
       <span>Income</span>
+      <span class="dot expense"></span>
       <span>Expenses</span>
-      <span>Balance</span>
     </div>
-    <div class="table-row" *ngFor="let month of months">
-      <span>{{ month.label }}</span>
-      <span class="positive">{{ month.income | currency }}</span>
-      <span class="negative">{{ month.expenses | currency }}</span>
-      <span [ngClass]="{ positive: month.balance >= 0, negative: month.balance < 0 }">
-        {{ month.balance | currency }}
-      </span>
+
+    <div class="bar-chart" [class.empty]="income.months.length === 0">
+      <ng-container *ngIf="income.months.length; else emptyIncomeChart">
+        <div class="bar-col" *ngFor="let month of income.months">
+          <div class="bar-stack">
+            <div class="bar income" [style.height.%]="barHeight(month.income, income.maxValue)"></div>
+            <div class="bar expense" [style.height.%]="barHeight(month.expenses, income.maxValue)"></div>
+          </div>
+          <p class="net" [ngClass]="{ positive: month.net >= 0, negative: month.net < 0 }">
+            {{ month.net | appCurrency }}
+          </p>
+          <p class="muted month-label">{{ month.label }}</p>
+        </div>
+      </ng-container>
+      <ng-template #emptyIncomeChart>
+        <p class="muted">No transactions in this period yet.</p>
+      </ng-template>
+    </div>
+  </section>
+
+  <section class="card" *ngIf="budgetVariance$ | async as variance">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Budget variance</div>
+        <p class="muted">Budgeted vs actual by category</p>
+      </div>
+      <div class="pill ghost" *ngIf="variance?.length">{{ variance.length }} active budgets</div>
+    </div>
+
+    <div *ngIf="variance?.length; else noBudgets">
+      <div class="variance-row" *ngFor="let item of variance; trackBy: trackById">
+        <div>
+          <p class="category-name">{{ item.name }}</p>
+          <p class="muted">{{ formatCategories(item.categories) }}</p>
+        </div>
+        <div class="progress-track">
+          <span
+            [style.width.%]="item.percentUsed"
+            [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }"
+          ></span>
+        </div>
+        <p class="pill small" [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
+          {{ item.percentUsed }}% used
+        </p>
+        <div class="money">
+          {{ item.actual | appCurrency }} / {{ item.limit | appCurrency }}
+        </div>
+        <div class="money" [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
+          {{ item.variance | appCurrency }}
+        </div>
+      </div>
+
+      <div class="table">
+        <div class="table-row head">
+          <span>Category</span>
+          <span>Budget</span>
+          <span>Actual</span>
+          <span>Difference</span>
+          <span>% used</span>
+        </div>
+        <div class="table-row" *ngFor="let item of variance; trackBy: trackById">
+          <span>{{ item.name }}</span>
+          <span>{{ item.limit | appCurrency }}</span>
+          <span>{{ item.actual | appCurrency }}</span>
+          <span [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
+            {{ item.variance | appCurrency }}
+          </span>
+          <span [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
+            {{ item.percentUsed | number:'1.0-0' }}%
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="card" *ngIf="savings$ | async as savings; else noSavings">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Savings progress</div>
+      <p class="muted">See how close you are to your goal and keep it updated.</p>
+    </div>
+    <div class="goal-select">
+      <label class="muted" for="goalSelect">Goal</label>
+      <select
+        id="goalSelect"
+        name="goalSelect"
+        [ngModel]="savings.goal.id"
+        (ngModelChange)="onGoalChange($event)"
+      >
+        <option *ngFor="let goal of savings.goals" [ngValue]="goal.id">{{ goal.title }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="savings-grid">
+    <div class="radial" [style.background]="progressGradient(savings.progress)">
+      <div class="radial-core">
+        <p class="value">{{ savings.progress }}%</p>
+        <p class="muted small">complete</p>
+      </div>
+    </div>
+
+    <div class="savings-meta">
+      <div class="stat">
+        <p class="label">Saved so far</p>
+        <p class="value positive">{{ savings.goal.currentAmount | appCurrency }}</p>
+      </div>
+      <div class="stat">
+        <p class="label">Goal amount</p>
+        <p class="value">{{ savings.goal.targetAmount | appCurrency }}</p>
+      </div>
+      <div class="stat">
+        <p class="label">Remaining</p>
+        <p class="value" [ngClass]="{ positive: savings.remaining <= 0, negative: savings.remaining > 0 }">
+          {{ savings.remaining > 0 ? (savings.remaining | appCurrency) : 'Goal reached' }}
+        </p>
+      </div>
+
+      <div class="projection" *ngIf="savings.projectedDate; else noProjection">
+        <p class="label">Projected completion</p>
+        <p class="value">{{ savings.projectedDate | date:'mediumDate' }}</p>
+        <p class="muted">
+          Based on average monthly surplus of {{ savings.averageSurplus | appCurrency:'1.0-0' }}.
+        </p>
+      </div>
+      <ng-template #noProjection>
+        <p class="label">Projected completion</p>
+        <p class="muted">Add positive net months to see a projection.</p>
+      </ng-template>
+
+      <div class="update-form">
+        <div class="field">
+          <label for="goalTarget">Update goal amount</label>
+          <input
+            id="goalTarget"
+            name="goalTarget"
+            type="number"
+            min="0"
+            [(ngModel)]="goalForm.target"
+            placeholder="Goal"
+          />
+        </div>
+        <div class="field">
+          <label for="goalCurrent">Saved so far</label>
+          <input
+            id="goalCurrent"
+            name="goalCurrent"
+            type="number"
+            min="0"
+            [(ngModel)]="goalForm.current"
+            placeholder="Current"
+          />
+        </div>
+        <button class="btn primary" (click)="updateSavingsGoal(savings.goal)" [disabled]="savingGoalBusy">
+          {{ savingGoalBusy ? 'Saving...' : 'Update savings goal' }}
+        </button>
+      </div>
     </div>
   </div>
 </section>
+
+<ng-template #noBudgets>
+  <p class="muted">No budgets found. Create one to see variance tracking.</p>
+</ng-template>
+
+<ng-template #noSavings>
+  <section class="card">
+    <div class="section-title">Savings progress</div>
+    <p class="muted">Create a savings goal to start tracking progress.</p>
+  </section>
+</ng-template>

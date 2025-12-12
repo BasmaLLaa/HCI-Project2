@@ -1,15 +1,16 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { DOCUMENT, NgFor, NgIf, AsyncPipe, CurrencyPipe } from '@angular/common';
+import { DOCUMENT, AsyncPipe } from '@angular/common';
 import { combineLatest, map } from 'rxjs';
 import { AuthService } from './services/auth.service';
 import { ReportingService } from './services/reporting.service';
 import { BudgetService } from './services/budget.service';
+import { AppCurrencyPipe } from './pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgIf, NgFor, AsyncPipe, CurrencyPipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, AsyncPipe, AppCurrencyPipe],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
