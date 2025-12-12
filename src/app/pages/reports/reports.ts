@@ -323,13 +323,11 @@ export class ReportsComponent implements OnInit {
   private resolveRange(selection: PeriodSelection): { start: Date; end: Date; label: string; monthCount: number } {
     const now = new Date();
 
-    // Helper to build a "last N months" range excluding the current partial month.
+    // Helper to build a "last N months" range including the current (partial) month.
+    // This way, transactions logged today still appear in the selected range.
     const lastNMonths = (n: number) => {
-      const endMonth = new Date(now.getFullYear(), now.getMonth(), 1); // start of current month
-      endMonth.setMonth(endMonth.getMonth()); // current month start
-      endMonth.setDate(0); // move to last day of previous month
-      const end = this.atEndOfDay(endMonth);
-      const startMonth = new Date(endMonth.getFullYear(), endMonth.getMonth() - (n - 1), 1);
+      const end = this.atEndOfDay(now); // include today
+      const startMonth = new Date(now.getFullYear(), now.getMonth() - (n - 1), 1);
       const start = this.atStartOfDay(startMonth);
       return { start, end, monthCount: n };
     };
