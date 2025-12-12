@@ -7,12 +7,20 @@ import { SettingsComponent } from './pages/settings/settings';
 import { GoalsComponent } from './pages/goals/goals';
 import { AuthLoginComponent } from './pages/auth-login/auth-login';
 import { AuthRegisterComponent } from './pages/auth-register/auth-register';
+import { BudgetDetailComponent } from './pages/budget-detail/budget-detail';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'auth/login' },
   { path: 'dashboard', component: DashboardComponent, title: 'Dashboard', canActivate: [authGuard] },
-  { path: 'budgets', component: BudgetsComponent, title: 'Budgets', canActivate: [authGuard] },
+  {
+    path: 'budgets',
+    canActivate: [authGuard],
+    children: [
+      { path: '', component: BudgetsComponent, title: 'Budgets' },
+      { path: ':id', component: BudgetDetailComponent, title: 'Budget detail' }
+    ]
+  },
   { path: 'transactions', component: TransactionsComponent, title: 'Transactions', canActivate: [authGuard] },
   { path: 'reports', component: ReportsComponent, title: 'Reports', canActivate: [authGuard] },
   { path: 'settings', component: SettingsComponent, title: 'Settings', canActivate: [authGuard] },

@@ -7,7 +7,9 @@
   <div class="controls">
     <label class="muted" for="period">Period</label>
     <select id="period" name="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange($event)">
-      <option *ngFor="let option of periodOptions" [ngValue]="option.key">{{ option.label }}</option>
+      @for (option of periodOptions; track option.key) {
+        <option [ngValue]="option.key">{{ option.label }}</option>
+      }
     </select>
     <div class="custom-range" *ngIf="selectedPeriod === 'custom'">
       <input
@@ -37,23 +39,23 @@
         <p class="muted">{{ income.label }}</p>
       </div>
       <div class="pill" [ngClass]="{ positive: income.net >= 0, negative: income.net < 0 }">
-        {{ income.net >= 0 ? 'Surplus' : 'Deficit' }} {{ income.net | appCurrency }}
+        {{ income.net >= 0 ? 'Surplus' : 'Deficit' }} {{ income.net | currency }}
       </div>
     </div>
 
     <div class="summary-grid">
       <div class="stat">
         <p class="label">Total income</p>
-        <p class="value positive">{{ income.totalIncome | appCurrency }}</p>
+        <p class="value positive">{{ income.totalIncome | currency }}</p>
       </div>
       <div class="stat">
         <p class="label">Total expenses</p>
-        <p class="value negative">{{ income.totalExpenses | appCurrency }}</p>
+        <p class="value negative">{{ income.totalExpenses | currency }}</p>
       </div>
       <div class="stat">
         <p class="label">Net balance</p>
         <p class="value" [ngClass]="{ positive: income.net >= 0, negative: income.net < 0 }">
-          {{ income.net | appCurrency }}
+          {{ income.net | currency }}
         </p>
       </div>
     </div>
@@ -67,16 +69,18 @@
 
     <div class="bar-chart" [class.empty]="income.months.length === 0">
       <ng-container *ngIf="income.months.length; else emptyIncomeChart">
-        <div class="bar-col" *ngFor="let month of income.months">
-          <div class="bar-stack">
-            <div class="bar income" [style.height.%]="barHeight(month.income, income.maxValue)"></div>
-            <div class="bar expense" [style.height.%]="barHeight(month.expenses, income.maxValue)"></div>
+        @for (month of income.months; track $index) {
+          <div class="bar-col">
+            <div class="bar-stack">
+              <div class="bar income" [style.height.%]="barHeight(month.income, income.maxValue)"></div>
+              <div class="bar expense" [style.height.%]="barHeight(month.expenses, income.maxValue)"></div>
+            </div>
+            <p class="net" [ngClass]="{ positive: month.net >= 0, negative: month.net < 0 }">
+              {{ month.net | currency }}
+            </p>
+            <p class="muted month-label">{{ month.label }}</p>
           </div>
-          <p class="net" [ngClass]="{ positive: month.net >= 0, negative: month.net < 0 }">
-            {{ month.net | appCurrency }}
-          </p>
-          <p class="muted month-label">{{ month.label }}</p>
-        </div>
+        }
       </ng-container>
       <ng-template #emptyIncomeChart>
         <p class="muted">No transactions in this period yet.</p>
@@ -94,27 +98,29 @@
     </div>
 
     <div *ngIf="variance?.length; else noBudgets">
-      <div class="variance-row" *ngFor="let item of variance; trackBy: trackById">
-        <div>
-          <p class="category-name">{{ item.name }}</p>
-          <p class="muted">{{ formatCategories(item.categories) }}</p>
+      @for (item of variance; track trackById($index, item)) {
+        <div class="variance-row">
+          <div>
+            <p class="category-name">{{ item.name }}</p>
+            <p class="muted">{{ formatCategories(item.categories) }}</p>
+          </div>
+          <div class="progress-track">
+            <span
+              [style.width.%]="item.percentUsed"
+              [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }"
+            ></span>
+          </div>
+          <p class="pill small" [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
+            {{ item.percentUsed }}% used
+          </p>
+          <div class="money">
+            {{ item.actual | currency }} / {{ item.limit | currency }}
+          </div>
+          <div class="money" [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
+            {{ item.variance | currency }}
+          </div>
         </div>
-        <div class="progress-track">
-          <span
-            [style.width.%]="item.percentUsed"
-            [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }"
-          ></span>
-        </div>
-        <p class="pill small" [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
-          {{ item.percentUsed }}% used
-        </p>
-        <div class="money">
-          {{ item.actual | appCurrency }} / {{ item.limit | appCurrency }}
-        </div>
-        <div class="money" [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
-          {{ item.variance | appCurrency }}
-        </div>
-      </div>
+      }
 
       <div class="table">
         <div class="table-row head">
@@ -124,17 +130,19 @@
           <span>Difference</span>
           <span>% used</span>
         </div>
-        <div class="table-row" *ngFor="let item of variance; trackBy: trackById">
-          <span>{{ item.name }}</span>
-          <span>{{ item.limit | appCurrency }}</span>
-          <span>{{ item.actual | appCurrency }}</span>
-          <span [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
-            {{ item.variance | appCurrency }}
-          </span>
-          <span [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
-            {{ item.percentUsed | number:'1.0-0' }}%
-          </span>
-        </div>
+        @for (item of variance; track trackById($index, item)) {
+          <div class="table-row">
+            <span>{{ item.name }}</span>
+            <span>{{ item.limit | currency }}</span>
+            <span>{{ item.actual | currency }}</span>
+            <span [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
+              {{ item.variance | currency }}
+            </span>
+            <span [ngClass]="{ positive: item.variance >= 0, negative: item.variance < 0 }">
+              {{ item.percentUsed | number:'1.0-0' }}%
+            </span>
+          </div>
+        }
       </div>
     </div>
   </section>
@@ -154,7 +162,9 @@
         [ngModel]="savings.goal.id"
         (ngModelChange)="onGoalChange($event)"
       >
-        <option *ngFor="let goal of savings.goals" [ngValue]="goal.id">{{ goal.title }}</option>
+        @for (goal of savings.goals; track goal.id) {
+          <option [ngValue]="goal.id">{{ goal.title }}</option>
+        }
       </select>
     </div>
   </div>
@@ -170,16 +180,16 @@
     <div class="savings-meta">
       <div class="stat">
         <p class="label">Saved so far</p>
-        <p class="value positive">{{ savings.goal.currentAmount | appCurrency }}</p>
+        <p class="value positive">{{ savings.goal.currentAmount | currency }}</p>
       </div>
       <div class="stat">
         <p class="label">Goal amount</p>
-        <p class="value">{{ savings.goal.targetAmount | appCurrency }}</p>
+        <p class="value">{{ savings.goal.targetAmount | currency }}</p>
       </div>
       <div class="stat">
         <p class="label">Remaining</p>
         <p class="value" [ngClass]="{ positive: savings.remaining <= 0, negative: savings.remaining > 0 }">
-          {{ savings.remaining > 0 ? (savings.remaining | appCurrency) : 'Goal reached' }}
+          {{ savings.remaining > 0 ? (savings.remaining | currency) : 'Goal reached' }}
         </p>
       </div>
 
@@ -187,7 +197,7 @@
         <p class="label">Projected completion</p>
         <p class="value">{{ savings.projectedDate | date:'mediumDate' }}</p>
         <p class="muted">
-          Based on average monthly surplus of {{ savings.averageSurplus | appCurrency:'1.0-0' }}.
+          Based on average monthly surplus of {{ savings.averageSurplus | currency:'USD':'symbol':'1.0-0' }}.
         </p>
       </div>
       <ng-template #noProjection>

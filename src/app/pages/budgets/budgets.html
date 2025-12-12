@@ -29,10 +29,12 @@
       <mat-form-field appearance="outline">
         <mat-label>Categories</mat-label>
         <mat-select formControlName="categoryIds" multiple>
-          <mat-option *ngFor="let cat of categories" [value]="cat.id">
-            <span class="dot" [style.background]="cat.color"></span>
-            {{ cat.name }}
-          </mat-option>
+          @for (cat of categories; track cat.id) {
+            <mat-option [value]="cat.id">
+              <span class="dot" [style.background]="cat.color"></span>
+              {{ cat.name }}
+            </mat-option>
+          }
         </mat-select>
         <mat-error *ngIf="form.controls.categoryIds.touched && form.controls.categoryIds.invalid">
           Pick at least one category
@@ -50,35 +52,39 @@
 
   <section class="card budgets-card">
     <div class="section-title">Budgets overview</div>
-    <div class="budget-row" *ngFor="let budget of budgets$ | async">
-      <div>
-        <p class="budget-name">{{ budget.name }}</p>
-        <p class="muted">
-          {{ budget.period }} | {{ budget.categoryIds.length }} categories | Limit {{ budget.limit | appCurrency }}
-        </p>
-        <div class="budget-tags" *ngIf="categories$ | async as cats">
-          <span class="pill" *ngFor="let id of budget.categoryIds">
-            <span class="dot" [style.background]="categoryColor(cats, id)"></span>
-            {{ labelForCategory(cats, id) }}
-          </span>
+    @for (budget of budgets$ | async; track budget.id) {
+      <div class="budget-row">
+        <div>
+          <p class="budget-name">{{ budget.name }}</p>
+          <p class="muted">
+            {{ budget.period }} | {{ budget.categoryIds.length }} categories | Limit {{ budget.limit | currency }}
+          </p>
+          <div class="budget-tags" *ngIf="categories$ | async as cats">
+            @for (id of budget.categoryIds; track id) {
+              <span class="pill">
+                <span class="dot" [style.background]="categoryColor(cats, id)"></span>
+                {{ labelForCategory(cats, id) }}
+              </span>
+            }
+          </div>
         </div>
-      </div>
 
-      <div class="budget-numbers">
-        <p>{{ budget.spent | appCurrency }} / {{ budget.limit | appCurrency }}</p>
-        <mat-progress-bar
-          mode="determinate"
-          [value]="(budget.spent / budget.limit) * 100"
-          [color]="budget.spent > budget.limit * 0.8 ? 'warn' : 'accent'">
-        </mat-progress-bar>
-        <div class="row-actions">
-          <a mat-stroked-button color="accent" [routerLink]="['/budgets', budget.id]">View details</a>
-          <button mat-stroked-button type="button" (click)="edit(budget)" [disabled]="submitting">Edit</button>
-          <button mat-flat-button color="warn" type="button" (click)="delete(budget)" [disabled]="submitting">
-            Delete
-          </button>
+        <div class="budget-numbers">
+          <p>{{ budget.spent | currency }} / {{ budget.limit | currency }}</p>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="(budget.spent / budget.limit) * 100"
+            [color]="budget.spent > budget.limit * 0.8 ? 'warn' : 'accent'">
+          </mat-progress-bar>
+          <div class="row-actions">
+            <a mat-stroked-button color="accent" [routerLink]="['/budgets', budget.id]">View details</a>
+            <button mat-stroked-button type="button" (click)="edit(budget)" [disabled]="submitting">Edit</button>
+            <button mat-flat-button color="warn" type="button" (click)="delete(budget)" [disabled]="submitting">
+              Delete
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    }
   </section>
 </div>

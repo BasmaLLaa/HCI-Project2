@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf, TitleCasePipe } from '@angular/common';
+import { AsyncPipe, NgIf, TitleCasePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -8,12 +8,11 @@ import { ProfileSettings } from '../../models/profile-settings';
 import { CategoryService } from '../../services/category.service';
 import { SettingsService } from '../../services/settings.service';
 import { AuthService } from '../../services/auth.service';
-import { CurrencyService } from '../../services/currency.service';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [AsyncPipe, NgFor, NgIf, ReactiveFormsModule, TitleCasePipe],
+  imports: [AsyncPipe, NgIf, ReactiveFormsModule, TitleCasePipe],
   templateUrl: './settings.html',
   styleUrl: './settings.scss'
 })
@@ -22,7 +21,6 @@ export class SettingsComponent implements OnInit {
   private settingsService = inject(SettingsService);
   private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
-  private currencyService = inject(CurrencyService);
 
   profileForm = this.fb.group({
     id: [1],
@@ -49,7 +47,6 @@ export class SettingsComponent implements OnInit {
     this.syncUserDetails();
     this.settingsService.getProfile().subscribe((profile: ProfileSettings) => {
       this.profileForm.patchValue(profile);
-      this.currencyService.setCurrency(profile.currency);
       this.syncUserDetails();
     });
   }
@@ -61,9 +58,7 @@ export class SettingsComponent implements OnInit {
     }
 
     this.savingProfile = true;
-    const payload = this.profileForm.getRawValue() as ProfileSettings;
-    this.settingsService.updateProfile(payload).subscribe({
-      next: (updated) => this.currencyService.setCurrency(updated.currency),
+    this.settingsService.updateProfile(this.profileForm.getRawValue() as ProfileSettings).subscribe({
       complete: () => (this.savingProfile = false)
     });
   }

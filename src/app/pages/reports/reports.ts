@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, DecimalPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe, NgClass, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
@@ -11,7 +11,6 @@ import { CategoryService } from '../../services/category.service';
 import { GoalService } from '../../services/goal.service';
 import { ReportingService } from '../../services/reporting.service';
 import { TransactionService } from '../../services/transaction.service';
-import { AppCurrencyPipe } from '../../pipes/app-currency.pipe';
 
 type PeriodKey = '1m' | '3m' | '6m' | 'ytd' | 'custom';
 
@@ -52,7 +51,7 @@ interface SavingsView {
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [AsyncPipe, AppCurrencyPipe, DatePipe, DecimalPipe, FormsModule, NgClass, NgFor, NgIf],
+  imports: [AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe, FormsModule, NgClass, NgIf],
   templateUrl: './reports.html',
   styleUrl: './reports.scss'
 })
@@ -104,7 +103,12 @@ export class ReportsComponent implements OnInit {
         const relevantTransactions = transactions.filter(
           tx =>
             tx.type === 'expense' &&
-            (categoryIds.length === 0 || categoryIds.includes(tx.categoryId))
+            (
+              // Prefer explicit budget match when a transaction is assigned to a budget
+              (tx.budgetId != null && tx.budgetId === budget.id) ||
+              // Fall back to category matching only for unassigned transactions
+              (tx.budgetId == null && (categoryIds.length === 0 || categoryIds.includes(tx.categoryId)))
+            )
         );
         const actual = relevantTransactions.reduce((sum, tx) => sum + tx.amount, 0);
         const variance = budget.limit - actual;

@@ -95,6 +95,19 @@ mat-form-field {
   font-weight: 700;
 }
 
+.payment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--stroke);
+  font-weight: 600;
+  font-size: 13px;
+}
+
 .muted {
   color: var(--muted);
   margin: 3px 0 0;

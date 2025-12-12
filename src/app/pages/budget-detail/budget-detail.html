@@ -6,7 +6,7 @@
         <p class="label">Budget detail</p>
         <h2>{{ budget.name }}</h2>
         <p class="muted">
-          {{ budget.period }} budget AA§ Limit {{ budget.limit | appCurrency }} AA§ Categories
+          {{ budget.period }} budget · Limit {{ budget.limit | currency }} · Categories
           {{ budget.categoryIds.length }}
         </p>
       </div>
@@ -25,7 +25,7 @@
         </ul>
       }
       <div card-footer>
-        Spent {{ budget.spent | appCurrency }} out of {{ budget.limit | appCurrency }}
+        Spent {{ budget.spent | currency }} out of {{ budget.limit | currency }}
       </div>
     </app-projected-card>
 

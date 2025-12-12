@@ -74,11 +74,11 @@
           </div>
           <div class="stat">
             <p class="label">This month</p>
-            <p class="value positive">{{ hero.income | appCurrency }}</p>
+            <p class="value positive">{{ hero.income | currency }}</p>
           </div>
           <div class="stat">
             <p class="label">Spent</p>
-            <p class="value negative">-{{ hero.expenses | appCurrency }}</p>
+            <p class="value negative">-{{ hero.expenses | currency }}</p>
           </div>
         </div>
       </section>

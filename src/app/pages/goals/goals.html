@@ -28,7 +28,9 @@
           <span>Category (optional)</span>
           <select formControlName="categoryId">
             <option [ngValue]="null">Uncategorized</option>
-            <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+            @for (cat of categories; track cat.id) {
+              <option [ngValue]="cat.id">{{ cat.name }}</option>
+            }
           </select>
         </label>
       </div>
@@ -56,34 +58,36 @@
         [(ngModel)]="filterText"
         aria-label="Filter goals">
     </div>
-    <div class="goal-row" *ngFor="let goal of filterGoals(goals); trackBy: trackByGoal">
-      <div>
-        <p class="goal-title">{{ goal.title }}</p>
-        <p class="muted">
-          Target {{ goal.targetAmount | appCurrency }} Aú Saved {{ goal.currentAmount | appCurrency }}
-          <ng-container *ngIf="goal.dueDate"> Aú Due {{ goal.dueDate | date:'mediumDate' }}</ng-container>
-        </p>
-        <div class="progress">
-          <div
-            class="progress-bar"
-            [ngStyle]="{
-              width: progress(goal) + '%',
-              background: progress(goal) >= 100 ? '#22c55e' : 'linear-gradient(90deg, #22c55e, #7c3aed)'
-            }"></div>
-        </div>
-        <p class="muted">{{ progress(goal) }}% complete</p>
-        <p class="muted" *ngIf="goal.note">{{ goal.note }}</p>
-      </div>
-        <div class="row-actions">
-          <div class="contribute">
-            <input type="number" min="1" step="10" #amt placeholder="+ amount">
-            <button class="btn primary" type="button" (click)="addContribution(goal, amt.valueAsNumber); amt.value = ''" [disabled]="submitting">
-              Add saved
-            </button>
+    @for (goal of filterGoals(goals); track trackByGoal($index, goal)) {
+      <div class="goal-row">
+        <div>
+          <p class="goal-title">{{ goal.title }}</p>
+          <p class="muted">
+            Target {{ goal.targetAmount | currency }} · Saved {{ goal.currentAmount | currency }}
+            <ng-container *ngIf="goal.dueDate"> · Due {{ goal.dueDate | date:'mediumDate' }}</ng-container>
+          </p>
+          <div class="progress">
+            <div
+              class="progress-bar"
+              [ngStyle]="{
+                width: progress(goal) + '%',
+                background: progress(goal) >= 100 ? '#22c55e' : 'linear-gradient(90deg, #22c55e, #7c3aed)'
+              }"></div>
           </div>
-        <button class="btn ghost" type="button" (click)="edit(goal)" [disabled]="submitting">Edit</button>
-        <button class="btn danger" type="button" (click)="delete(goal)" [disabled]="submitting">Delete</button>
+          <p class="muted">{{ progress(goal) }}% complete</p>
+          <p class="muted" *ngIf="goal.note">{{ goal.note }}</p>
+        </div>
+          <div class="row-actions">
+            <div class="contribute">
+              <input type="number" min="1" step="10" #amt placeholder="+ amount">
+              <button class="btn primary" type="button" (click)="addContribution(goal, amt.valueAsNumber); amt.value = ''" [disabled]="submitting">
+                Add saved
+              </button>
+            </div>
+          <button class="btn ghost" type="button" (click)="edit(goal)" [disabled]="submitting">Edit</button>
+          <button class="btn danger" type="button" (click)="delete(goal)" [disabled]="submitting">Delete</button>
+        </div>
       </div>
-    </div>
+    }
   </section>
 </div>

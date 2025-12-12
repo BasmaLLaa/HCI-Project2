@@ -1,16 +1,28 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, map, tap } from 'rxjs';
 
 import { Budget } from '../models/budget';
+import { TransactionService } from './transaction.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetService {
   private readonly baseUrl = 'api/budgets';
+  private transactionService = inject(TransactionService);
   private budgetsSubject = new BehaviorSubject<Budget[]>([]);
-  readonly budgets$ = this.budgetsSubject.asObservable();
+
+  readonly budgets$ = combineLatest([this.budgetsSubject.asObservable(), this.transactionService.getTransactions()]).pipe(
+    map(([budgets, transactions]) =>
+      budgets.map((budget) => ({
+        ...budget,
+        spent: transactions
+          .filter((tx) => tx.budgetId === budget.id && tx.type === 'expense')
+          .reduce((sum, tx) => sum + tx.amount, 0)
+      }))
+    )
+  );
 
   constructor(private http: HttpClient) {
     this.refresh();
@@ -21,13 +33,18 @@ export class BudgetService {
   }
 
   createBudget(budget: Omit<Budget, 'id' | 'spent'> & Partial<Pick<Budget, 'spent'>>): Observable<Budget> {
-    const payload: Budget = {
+    const payload: Omit<Budget, 'id'> = {
       spent: budget.spent ?? 0,
-      ...budget,
-      id: 0
+      ...budget
     };
 
-    return this.http.post<Budget>(this.baseUrl, payload).pipe(tap(() => this.refresh()));
+    return this.http.post<Budget>(this.baseUrl, payload).pipe(
+      tap((created) => {
+        // Push the newly created budget immediately so lists update without waiting on a separate fetch
+        const current = this.budgetsSubject.value;
+        this.budgetsSubject.next([...current, created]);
+      })
+    );
   }
 
   updateBudget(budget: Budget): Observable<Budget> {

@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, NgFor, NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, DatePipe, NgIf, NgStyle } from '@angular/common';
 import { Component, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, Subject, takeUntil } from 'rxjs';
@@ -7,12 +7,11 @@ import { Goal } from '../../models/goal';
 import { Category } from '../../models/category';
 import { GoalService } from '../../services/goal.service';
 import { CategoryService } from '../../services/category.service';
-import { AppCurrencyPipe } from '../../pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-goals',
   standalone: true,
-  imports: [AsyncPipe, AppCurrencyPipe, DatePipe, FormsModule, NgFor, NgIf, NgStyle, ReactiveFormsModule],
+  imports: [AsyncPipe, CurrencyPipe, DatePipe, FormsModule, NgIf, NgStyle, ReactiveFormsModule],
   templateUrl: './goals.html',
   styleUrl: './goals.scss'
 })
@@ -46,7 +45,7 @@ export class GoalsComponent implements OnDestroy {
   }
 
   refresh(): void {
-    this.goals$ = this.goalService.getGoals();
+    this.goalService.refresh();
   }
 
   submit(): void {
@@ -73,6 +72,7 @@ export class GoalsComponent implements OnDestroy {
           this.reset();
           this.refresh();
         },
+        error: () => (this.submitting = false),
         complete: () => (this.submitting = false)
       });
     } else {
@@ -90,6 +90,7 @@ export class GoalsComponent implements OnDestroy {
             this.reset();
             this.refresh();
           },
+          error: () => (this.submitting = false),
           complete: () => (this.submitting = false)
         });
     }
@@ -111,6 +112,7 @@ export class GoalsComponent implements OnDestroy {
     this.submitting = true;
     this.goalService.deleteGoal(goal.id).subscribe({
       next: () => this.refresh(),
+      error: () => (this.submitting = false),
       complete: () => {
         this.submitting = false;
         if (this.editing?.id === goal.id) {
@@ -145,7 +147,10 @@ export class GoalsComponent implements OnDestroy {
     this.submitting = true;
     const updated: Goal = { ...goal, currentAmount: goal.currentAmount + amount };
     this.goalService.updateGoal(updated).subscribe({
-      next: () => this.refresh(),
+      next: () => {
+        // updateGoal already pushes to the shared stream; no extra refresh needed
+      },
+      error: () => (this.submitting = false),
       complete: () => (this.submitting = false)
     });
   }

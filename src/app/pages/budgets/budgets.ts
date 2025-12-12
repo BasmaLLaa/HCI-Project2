@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -9,12 +9,11 @@ import { Category } from '../../models/category';
 import { BudgetService } from '../../services/budget.service';
 import { CategoryService } from '../../services/category.service';
 import { MATERIAL_IMPORTS } from '../../material';
-import { AppCurrencyPipe } from '../../pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-budgets',
   standalone: true,
-  imports: [AsyncPipe, AppCurrencyPipe, NgFor, NgIf, ReactiveFormsModule, RouterLink, ...MATERIAL_IMPORTS],
+  imports: [AsyncPipe, CurrencyPipe, NgIf, ReactiveFormsModule, RouterLink, ...MATERIAL_IMPORTS],
   templateUrl: './budgets.html',
   styleUrl: './budgets.scss'
 })
@@ -37,7 +36,7 @@ export class BudgetsComponent {
   submitting = false;
 
   refreshBudgets(): void {
-    this.budgets$ = this.budgetService.getBudgets();
+    this.budgetService.refresh();
   }
 
   submit(): void {
@@ -67,6 +66,7 @@ export class BudgetsComponent {
           this.resetForm();
           this.refreshBudgets();
         },
+        error: () => (this.submitting = false),
         complete: () => (this.submitting = false)
       });
     } else {
@@ -84,6 +84,7 @@ export class BudgetsComponent {
             this.resetForm();
             this.refreshBudgets();
           },
+          error: () => (this.submitting = false),
           complete: () => (this.submitting = false)
         });
     }
@@ -103,6 +104,7 @@ export class BudgetsComponent {
     this.submitting = true;
     this.budgetService.deleteBudget(budget.id).subscribe({
       next: () => this.refreshBudgets(),
+      error: () => (this.submitting = false),
       complete: () => {
         this.submitting = false;
         if (this.editingBudget?.id === budget.id) {

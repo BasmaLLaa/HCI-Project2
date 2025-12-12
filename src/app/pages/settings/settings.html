@@ -73,10 +73,12 @@
     </form>
 
     <div class="category-list">
-      <div class="pill" *ngFor="let cat of categories">
-        <span class="dot" [style.background]="cat.color"></span>
-        {{ cat.name }} · {{ cat.type | titlecase }}
-      </div>
+      @for (cat of categories; track cat.id) {
+        <div class="pill">
+          <span class="dot" [style.background]="cat.color"></span>
+          {{ cat.name }} · {{ cat.type | titlecase }}
+        </div>
+      }
     </div>
   </section>
 </div>

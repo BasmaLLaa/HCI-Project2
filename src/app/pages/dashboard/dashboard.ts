@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, NgClass, NgFor, NgIf, PercentPipe } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, DatePipe, NgClass, NgIf, PercentPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
 
@@ -10,12 +10,11 @@ import { Transaction } from '../../models/transaction';
 import { Category } from '../../models/category';
 import { GoalService } from '../../services/goal.service';
 import { Goal } from '../../models/goal';
-import { AppCurrencyPipe } from '../../pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [AsyncPipe, AppCurrencyPipe, DatePipe, NgClass, NgFor, NgIf, PercentPipe],
+  imports: [AsyncPipe, CurrencyPipe, DatePipe, NgClass, NgIf, PercentPipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -68,7 +67,6 @@ export class DashboardComponent {
           const db = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
           return da - db;
         })
-        .slice(0, 3)
     )
   );
 
